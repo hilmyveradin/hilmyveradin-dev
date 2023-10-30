@@ -1,52 +1,55 @@
+"use client"
+
 import Link from "next/link"
+import { usePathname } from "next/navigation";
 
-import { siteConfig } from "@/config/site"
-import { buttonVariants } from "@/components/ui/button"
-import { Icons } from "@/components/icons"
-import { MainNav } from "@/components/main-nav"
-import { ThemeToggle } from "@/components/theme-toggle"
+const SiteHeader = () => {
+  const pathName = usePathname();
 
-export function SiteHeader() {
+  let routeText;
+
+  switch (pathName) {
+    case '/':
+      routeText = 'About';
+      break;
+    case '/projects':
+      routeText = 'Projects';
+      break;
+    case '/blog':
+      routeText = 'Blog';
+      break;
+    default:
+      routeText = 'Unknown Page';
+  }
+
   return (
-    <header className="bg-background sticky top-0 z-40 w-full border-b">
-      <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-        <MainNav items={siteConfig.mainNav} />
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <nav className="flex items-center space-x-1">
-            <Link
-              href={siteConfig.links.github}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <div
-                className={buttonVariants({
-                  size: "icon",
-                  variant: "ghost",
-                })}
-              >
-                <Icons.gitHub className="h-5 w-5" />
-                <span className="sr-only">GitHub</span>
-              </div>
-            </Link>
-            <Link
-              href={siteConfig.links.twitter}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <div
-                className={buttonVariants({
-                  size: "icon",
-                  variant: "ghost",
-                })}
-              >
-                <Icons.twitter className="h-5 w-5 fill-current" />
-                <span className="sr-only">Twitter</span>
-              </div>
-            </Link>
-            <ThemeToggle />
-          </nav>
-        </div>
-      </div>
+    <header className="flex flex-col w-[40rem] space-y-4 mt-20">
+    <h1 className="flex justify-start text-2xl font-bold">{routeText}</h1>
+    <div className="flex justify-end space-x-4">
+      <Link
+        href={"/projects"}
+        className={`text-lg ${pathName === "/projects" ? "text-gray-500": ""}`}
+        replace
+      >
+        Projects
+      </Link>
+      <Link
+        href={"/blog"}
+        className={`text-lg ${pathName === "/blog" ? "text-gray-500": ""}`}
+        replace
+      >
+        Blog
+      </Link>
+      <Link
+        href={"/"}
+        className={`text-lg ${pathName === "/" ? "text-gray-500 ": ""}`}
+        replace
+      >
+        About
+      </Link>
+    </div>
     </header>
   )
 }
+
+export default SiteHeader;
