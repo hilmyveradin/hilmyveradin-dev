@@ -76,6 +76,7 @@ original position and size.
 
 Take a look at this code. We’ll explain the important parts after. To understand more about Framer Motion, look closely at points 8, 10, 11, and 12:
 
+<pre className="overflow-x-auto max-w-xs md:max-w-[40rem] bg-transparent">
 ```java
 //1
 'use client'
@@ -137,6 +138,7 @@ const ContactCards = () => {
 
 export default ContactCards;
 ```
+</pre>
 
 1. **`'use client'`** is a build in tool in next.js to know wether a component is rendered using server side or client side. Without using ‘use client’ command, we cannot use useState in react.
 2. This line imports two components from the Chakra UI library, **`IconButton`** and **`chakra`**. **`IconButton`** is a Chakra UI component that serves as a button that can be customized with icons, while **`chakra`** is a function that can be used to add Chakra UI props to custom or third-party components.
@@ -149,7 +151,7 @@ export default ContactCards;
 9. The **`MotionBox`** component is used to create a container for the **`MotionIconButton`**. It is positioned at the bottom right of the viewport, and it's arranged in a column in reverse order. The reason why it’s arranged the column in reverse order is because we want to make the pop up animation to the top
 10. The **`variants`** prop on **`MotionIconButton`** is being set to the **`mainButton`** object, which means the button will use the **`open`** and **`closed`** animation states defined in that object.
 11. **`initial="closed"`** sets the initial animation state of the button to **`closed`**.
-12. The **`animate`** prop is the built in animation props of framer motion. it set to either **`'open'`** or **`'closed'`**, depending on the state of **`isOpen`**. This means that when the **`isOpen`** state is **`true`**, the button will animate to the **`open`** state, and when it's **`false`**, the button will animate to the **`closed`** state. The **`isOpen`** state is toggled whenever the button is clicked. you can read more here: https://www.framer.com/motion/animation/
+12. The **`animate`** prop is the built in animation props of framer motion. it set to either **`'open'`** or **`'closed'`**, depending on the state of **`isOpen`**. This means that when the **`isOpen`** state is **`true`**, the button will animate to the **`open`** state, and when it's **`false`**, the button will animate to the **`closed`** state. The **`isOpen`** state is toggled whenever the button is clicked. you can read more [here](https://www.framer.com/motion/animation/)
 
 After this, we can straight up to work on building pop-up and dismiss animation!
 
@@ -160,6 +162,7 @@ Next, we’ll create a pop-up and dismiss animation. This is the animation that 
 
 Check this code out, and we’ll break it down afterward:
 
+<pre className="overflow-x-auto max-w-xs md:max-w-[40rem] bg-transparent">
 ```java
 import { AbsoluteCenter, IconButton, chakra} from '@chakra-ui/react';
 // 1 (AnimatePresence only)
@@ -272,6 +275,7 @@ const ContactCards = () => {
 
 export default ContactCards;
 ```
+</pre>
 
 1. AnimatePresence from framer-motion is a component used to animate components when they are mounted or unmounted. It's essential when you want to animate components as they come in and out of existence.
 2. Importing various icon components from the **`react-icons`** library. These icons are used for the social media buttons (Twitter, Instagram, and WhatsApp) and the main chat button (when open and closed).
@@ -288,6 +292,7 @@ There you go! you have the desired animation and behavior of Pop Up Chat Animati
 
 To add the Instagram color, we need to include a custom color in Chakra UI. We can achieve this by extending the Chakra UI theme. Navigate to **/app/page.js** and add the following code. The explanation for this code is provided afterwards:
 
+<pre className="overflow-x-auto max-w-xs md:max-w-[40rem] bg-transparent">
 ```java
 'use client'
 
@@ -314,6 +319,7 @@ export default function Home() {
 }
 
 ```
+</pre>
 
 1. **`extendTheme`** from Chakra UI is imported. This is a utility function that allows you to extend the default theme provided by Chakra UI. You can customize almost anything in the theme, from base colors to component styles.
 2. A new theme is created with the **`extendTheme`** function. In this new theme, a custom color property **`instagramGradient`** is added to the **`colors`** field. This new color is a linear gradient that transitions between several colors (from **`#FEDA75`** to **`#4F5BD5`**).
