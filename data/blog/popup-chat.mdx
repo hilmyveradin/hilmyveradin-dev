@@ -1,0 +1,335 @@
+---
+title: Create Popup Chat with Framer Motion
+summary: Tutorial on how to make Popup chat with framer motion
+date: 2023-06-20
+tags: ['react', 'typescript', 'features']
+---
+
+# **How to Make Pop Up Chat animation with Framer Motion**
+
+Have you ever wondered how to make pop-up chat animation like this?
+
+<div className="border-lg flex w-full items-center justify-center">
+  <img src="/static/images/popup-chat/popup-chat.gif" className="rounded-lg" alt="popup chat" />
+</div>
+
+If yes, this articles might be for you!
+
+### Table Of Content
+
+1. [Introduction — What are we creating?](#introduction---what-are-we-creating)
+2. [Must-knows for this guide](#must-knows-for-this-guide)
+3. [An overview of Framer Motion](#an-overview-of-framer-motion)
+4. [A brief introduction to animation and computer graphics](#a-brief-introduction-to-animation-and-computer-graphics)
+5. [Let’s get started!](#lets-get-started)
+6. [Creating a rotating animation using Framer Motion](#creating-a-rotating-animation-using-framer-motion)
+7. [Building a pop-up animation using Framer Motion](#building-a-pop-up-animation-using-framer-motion)
+8. [Changing Instagram’s color](#changing-instagrams-color)
+9. [We’re done!](#were-done)
+
+<div id="introduction---what-are-we-creating" />
+### **Introduction — What are we creating?**
+
+In the past month, I’ve been focusing on a project named **[cobauijan.com](http://cobauijan.com/)**. One of my job was to create an animated chat pop-up. After doing some research, I decided to use a tool called Framer Motion.
+
+Framer Motion is a library for the React framework that helps to animate components. The animation we want to make will consist of a rotating and a popping up action when you click on the chat icon, revealing several more icons. When you click on the ‘x’ icon, it will smoothly close again.
+
+<div id="must-knows-for-this-guide" />
+### **Must-knows for this guide**
+
+Before you start this guide, you should know about the React library. If you’re not familiar with React, you can check the official documentation [here](https://react.dev/). In this guide, we’ll use Framer Motion and Chakra UI to make things simpler. Chakra UI is a user-friendly React-based UI Library. Also, we’re using Next.js for this project. You might want to have a quick look at Next.js [here](https://nextjs.org/).
+
+<div id="an-overview-of-framer-motion" />
+### **An overview of Framer Motion**
+
+[Framer Motion](https://www.framer.com/motion/) was launched in 2019 and has since become a popular tool for making animations in React apps. It is simple, powerful, and great for any developer who wants to add animations to their projects. To understand Framer Motion better, let’s learn about the basics of animations and movements in computer graphics.
+
+<div id="a-brief-introduction-to-animation-and-computer-graphics" />
+### **A brief introduction to animation and computer graphics**
+
+Animations make web experiences interactive and fun. There are three main types of changes that are important for most animations: translation (movement in space), rotation (turning around an axis), and scaling (changing size).
+
+- **Translation:** This is moving an object from one place to another in 2D or 3D space. In terms of UI, this can be used to move elements across the screen.
+- **Rotation:** Rotation is turning an object around a specific point in space. For instance, our chat icon rotates when clicked on.
+- **Scaling:** Scaling is the process of making an object bigger or smaller while keeping its shape and proportions the same.
+
+<div id="lets-get-started" />
+### **Let’s get started!**
+
+It’s easier to learn this if we do it step by step. To make things easier, you can clone or download this [GitHub repo](https://github.com/hilmyveradin/blog-resouces/tree/main/PopChatAnimation/starter)
+
+You can see the quick start guide inside the repository
+
+We will be working on components called ContactCard. You can find it inside _/src/components/ContactCard.js_
+
+Then, we can start our first task! Let’s create a rotating animation!
+
+<div id="creating-a-rotating-animation-using-framer-motion" />
+### **Creating a rotating animation using Framer Motion**
+<div className="border-lg flex w-full items-center justify-center">
+  <img src="/static/images/popup-chat/rotating-chat.gif" className="rounded-lg" alt="rotating chat" />
+</div>
+
+Now, we’ll start by making a simple circle icon that rotates when clicked on. The
+rotation is defined by **mainButton**, which has two states, **open** and **closed**.
+When it's open, the icon rotates 90 degrees. When it's closed, it goes back to its
+original position and size.
+
+Take a look at this code. We’ll explain the important parts after. To understand more about Framer Motion, look closely at points 8, 10, 11, and 12:
+
+<pre className="overflow-x-auto max-w-xs md:max-w-[40rem] bg-transparent">
+```java
+//1
+'use client'
+
+//2
+import { IconButton, chakra} from '@chakra-ui/react';
+//3
+import { motion } from 'framer-motion';
+//4
+import { useState } from 'react';
+//5
+import { FiX } from 'react-icons/fi';
+//6
+import { HiChatAlt2 } from 'react-icons/hi';
+
+//7
+const MotionBox = motion(chakra.div);
+const MotionIconButton = motion(IconButton);
+
+const ContactCards = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  //8
+  const mainButton = {
+    open: { rotate: 90, scale: 1.2 },
+    closed: { rotate: 0, scale: 1.2 },
+  };
+
+  return (
+    //9
+    <MotionBox
+      position="fixed"
+      bottom="3rem"
+      right="2rem"
+      zIndex="sticky"
+      flexDirection="column-reverse"
+      display="flex"
+    >
+
+      <MotionIconButton
+        bg="gray.200"
+        boxShadow="2px 3px 8px gray"
+        position="fixed"
+        bottom="3rem"
+        right="2rem"
+        zIndex="sticky"
+        size="lg"
+        icon={isOpen ? <FiX /> : <HiChatAlt2 />}
+        onClick={() => setIsOpen(!isOpen)}
+        variants={mainButton} //10
+        initial="closed" //11
+        animate={isOpen ? 'open' : 'closed'} //12
+        variant="solid"
+        isRound={true}
+      />
+    </MotionBox>
+  );
+};
+
+export default ContactCards;
+```
+</pre>
+
+1. **`'use client'`** is a build in tool in next.js to know wether a component is rendered using server side or client side. Without using ‘use client’ command, we cannot use useState in react.
+2. This line imports two components from the Chakra UI library, **`IconButton`** and **`chakra`**. **`IconButton`** is a Chakra UI component that serves as a button that can be customized with icons, while **`chakra`** is a function that can be used to add Chakra UI props to custom or third-party components.
+3. This line imports the **`motion`** function from the Framer Motion library. This library is used for animating UI components. The **`motion`** function can be used to create animated versions of HTML or React components.
+4. This line imports the **`useState`** hook from React. This hook is used to create state variables in functional components.
+5. The **`FiX`** and **`HiChatAlt2`** are specific icons imported from the React Icons library.
+6. Similar to the fifth, it also imports **`HiChatAlt2`** from the React Icons library.
+7. Here, the **`motion`** function from Framer Motion is being used in conjunction with Chakra UI's **`chakra`** function to create animated, styleable **`div`** and **`IconButton`** components. The reason why we encapsulate and create this component is because to make sure we can use framer motion props
+8. **`mainButton`** is an object that defines the animation states for the button. It has two states, **`open`** and **`closed`**, each specifying a different rotation and scale to apply to the button.
+9. The **`MotionBox`** component is used to create a container for the **`MotionIconButton`**. It is positioned at the bottom right of the viewport, and it's arranged in a column in reverse order. The reason why it’s arranged the column in reverse order is because we want to make the pop up animation to the top
+10. The **`variants`** prop on **`MotionIconButton`** is being set to the **`mainButton`** object, which means the button will use the **`open`** and **`closed`** animation states defined in that object.
+11. **`initial="closed"`** sets the initial animation state of the button to **`closed`**.
+12. The **`animate`** prop is the built in animation props of framer motion. it set to either **`'open'`** or **`'closed'`**, depending on the state of **`isOpen`**. This means that when the **`isOpen`** state is **`true`**, the button will animate to the **`open`** state, and when it's **`false`**, the button will animate to the **`closed`** state. The **`isOpen`** state is toggled whenever the button is clicked. you can read more [here](https://www.framer.com/motion/animation/)
+
+After this, we can straight up to work on building pop-up and dismiss animation!
+
+<div id="building-a-pop-up-animation-using-framer-motion" />
+### **Building a pop-up animation using Framer Motion**
+
+Next, we’ll create a pop-up and dismiss animation. This is the animation that appears when you click on the chat icon. It will pop up several more icons, which you can click on to interact with the chat (in this case, there are Instagram, WhatsApp, and Twitter account). When you click on the ‘x’ icon, the chat will smoothly close again.
+
+Check this code out, and we’ll break it down afterward:
+
+<pre className="overflow-x-auto max-w-xs md:max-w-[40rem] bg-transparent">
+```java
+import { AbsoluteCenter, IconButton, chakra} from '@chakra-ui/react';
+// 1 (AnimatePresence only)
+import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
+// 2
+import { FaWhatsapp, FaInstagram, FaTwitter } from 'react-icons/fa';
+import { FiX } from 'react-icons/fi';
+import { HiChatAlt2 } from 'react-icons/hi';
+
+const MotionBox = motion(chakra.div);
+const MotionIconButton = motion(IconButton);
+
+const ContactCards = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const mainButton = {
+    open: { rotate: 90, scale: 1.2 },
+    closed: { rotate: 0, scale: 1.2 },
+  };
+
+  const listButtons = {
+    //3
+    open: (index) => ({
+      y: -(index * 10 + 70),
+      opacity: 1,
+      transition: { delay: index * 0.3 },
+    }),
+  //4
+    closed: (index) => ({
+      y: index * 10,
+      opacity: 0,
+      transition: { delay: index * 0.1 },
+    }),
+  };
+
+  //5
+  const buttons = [
+    {
+      icon: <FaTwitter />,
+      url: 'https://twitter.com/twitter_link_here',
+      color: 'twitter.500',
+    },
+    {
+      icon: <FaInstagram />,
+      url: 'https://ig.me/m/instagram_link_here',
+      color: 'red',
+    },
+    {
+      icon: <FaWhatsapp />,
+      url: 'https://wa.me/whatsapp_link_here',
+      color: 'whatsapp.500',
+    },
+  ];
+
+  return (
+    <MotionBox
+      position="fixed"
+      bottom="3rem"
+      right="2rem"
+      zIndex="sticky"
+      flexDirection="column-reverse"
+      display="flex"
+    >
+      <AnimatePresence>
+        {isOpen &&
+          buttons.map((button, i) => (
+            <MotionBox
+              boxShadow="5px 3px 10px gray"
+              fontSize="30px"
+              bg={button.color}
+              as="a"
+              key={button.url}
+              href={button.url}
+              variants={listButtons}
+              initial="closed"
+              animate="open"
+              exit="closed"
+              custom={i} // 6
+              width="55px"
+              height="55px"
+              transformOrigin="bottom" // 7
+              borderRadius="50%"
+              textColor="white"
+            >
+              <AbsoluteCenter>{button.icon}</AbsoluteCenter>
+            </MotionBox>
+          ))}
+      </AnimatePresence>
+      <MotionIconButton
+        bg="gray"
+        boxShadow="2px 3px 8px gray"
+        position="fixed"
+        bottom="3rem"
+        right="2rem"
+        zIndex="sticky"
+        aria-label="Open helper"
+        size="lg"
+        icon={isOpen ? <FiX /> : <HiChatAlt2 />}
+        onClick={() => setIsOpen(!isOpen)}
+        variants={mainButton}
+        initial="closed"
+        animate={isOpen ? 'open' : 'closed'}
+        variant="solid"
+        isRound={true}
+      />
+    </MotionBox>
+  );
+};
+
+export default ContactCards;
+```
+</pre>
+
+1. AnimatePresence from framer-motion is a component used to animate components when they are mounted or unmounted. It's essential when you want to animate components as they come in and out of existence.
+2. Importing various icon components from the **`react-icons`** library. These icons are used for the social media buttons (Twitter, Instagram, and WhatsApp) and the main chat button (when open and closed).
+3. The **`listButtons.open`** object defines the properties for the framer-motion animation when the contact card opens. For each button, its vertical position (**`y`**) is calculated as a negative offset based on its index, making the button move upward. The button's opacity is set to 1 (completely visible), and each button appears with a delay that's based on its index (the higher the index, the later the button appears). In short, this used for each component to pop up the button
+4. The **`listButtons.closed`** object defines the properties for the framer-motion animation when the contact card closes. For each button, its vertical position (**`y`**) is calculated as a positive offset based on its index, making the button move downward. The button's opacity is set to 0 (completely invisible), and each button disappears with a delay that's based on its index (the higher the index, the earlier the button disappears). In short, this used for each component to dismiss the button
+5. The **`buttons`** array defines the three social media buttons with their respective icons, URLs, and colors.
+6. The **`custom`** prop on **`MotionBox`** is used to pass the index (**`i`**) to the framer-motion **`open`** and **`closed`** variants, which in turn use the index to calculate each button's vertical position and animation delay.
+7. The **`transformOrigin`** prop on **`MotionBox`** is used to define the origin point for transformations applied to the component. In this case, it's set to "bottom", which means the buttons rotate and scale from the bottom center of the component.
+
+There you go! you have the desired animation and behavior of Pop Up Chat Animation with Framer Motion. But there are things thats still odds, the instagram color isn’t right yet. So, we need to add our own custom color in ChakraUI. You can skip this part if you only wanted to learn about how to make a framer motion animation
+
+<div id="changing-instagrams-color" />
+### **Changing Instagram’s color**
+
+To add the Instagram color, we need to include a custom color in Chakra UI. We can achieve this by extending the Chakra UI theme. Navigate to **/app/page.js** and add the following code. The explanation for this code is provided afterwards:
+
+<pre className="overflow-x-auto max-w-xs md:max-w-[40rem] bg-transparent">
+```java
+'use client'
+
+import ContactCards from '@/components/ContactCards';
+import { ChakraProvider } from '@chakra-ui/react';
+// 1
+import { extendTheme } from '@chakra-ui/react';
+
+//2
+const theme = extendTheme({
+  colors: {
+    instagramGradient: {
+      500: 'linear-gradient(to top right, #FEDA75, #FA7E1E, #D62976, #962FBF, #4F5BD5)',
+    },
+  }
+})
+
+export default function Home() {
+  return (
+    <ChakraProvider theme={theme}>
+      <ContactCards/>
+    </ChakraProvider>
+  )
+}
+
+```
+</pre>
+
+1. **`extendTheme`** from Chakra UI is imported. This is a utility function that allows you to extend the default theme provided by Chakra UI. You can customize almost anything in the theme, from base colors to component styles.
+2. A new theme is created with the **`extendTheme`** function. In this new theme, a custom color property **`instagramGradient`** is added to the **`colors`** field. This new color is a linear gradient that transitions between several colors (from **`#FEDA75`** to **`#4F5BD5`**).
+
+Now, you can use instagramGradient colors to our specified instagram button, head back to ContactCards.js and change the color from ‘red’ to ‘instagramGradient’!
+
+<div id="were-done" />
+### **We’re done!**
+
+And there you have it! That’s how you can create a pop-up chat button using Framer Motion, with the help of Chakra UI. If you wanted to see the completed project, you can see it with [this link](https://github.com/hilmyveradin/blog-resouces/tree/main/PopChatAnimation/completed)
+
+Please note that there may be alternative approaches or even better methods to achieve the same result. If you have any questions or feedback, please don’t hesitate to reach out. Your input is greatly appreciated. Thank you!
