@@ -8,7 +8,7 @@ const siteMetadata = {
   siteUrl: 'https://hilmyveradin.dev',
   siteRepo: 'https://github.com/hilmyveradin/hilmyveradin.dev',
   siteLogo: '/static/images/avatar.jpg',
-  socialBanner: '/static/images/twitter-card.png',
+  socialBanner: '/static/images/avatar.png',
   email: 'hilmyveradin@gmail.com',
   github: 'https://github.com/hilmyveradin',
   x: 'https://twitter.com/hilmy_veradin',
