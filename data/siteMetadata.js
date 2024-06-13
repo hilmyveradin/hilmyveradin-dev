@@ -7,7 +7,7 @@ const siteMetadata = {
   theme: 'system', // system, dark or light
   siteUrl: 'https://hilmyveradin.dev',
   siteRepo: 'https://github.com/hilmyveradin/hilmyveradin.dev',
-  siteLogo: '/static/images/avatar.jpg',
+  siteLogo: '/static/images/avatar.png',
   socialBanner: '/static/images/avatar.png',
   email: 'hilmyveradin@gmail.com',
   github: 'https://github.com/hilmyveradin',
