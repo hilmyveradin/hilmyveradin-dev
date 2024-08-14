@@ -1,0 +1,71 @@
+---
+title: Making OTPKit Package
+summary: Make OTPKit available using Swift Pacakage Manager
+date: '2024-08-14'
+tags: ['OTPKit', 'GSOC', 'Swift']
+---
+
+<div className="border-lg flex w-full items-center justify-center flex-col !space-y-1">
+  <img src="/static/images/making-otpkit-package/1.png" className="rounded-lg" alt="OTPKit GSOC" />
+</div>
+I have been working on my Google Summer of Code project for the past 2 months. Google Summer of Code is essentially a program where students around the world can contribute to open-source projects provided by various organizations.
+
+In this year's GSoC, I became a contributor to the Open Transit Software Foundation, mentored by Aaron Brethorst. My project was to create a Trip Planner Library in Swift!
+
+After working on its basic functionality for a while, I finally hit the milestone where the project was good enough to be published. One of the tasks left was to make this library available using Swift Package Manager (SPM).
+
+The original codebase included the OTPKit framework, the OTPKitDemo project, and OTPKitTests. My main focus was to make OTPKit available through SPM, with OTPKitDemo serving as its example, and OTPKitTests as the base unit tests for OTPKit to ensure its code quality.
+
+The question arose: How can I make OTPKit available for Swift Packages? To answer that, I initiated a new Swift Package from Xcode. I used a reference from [this guide](https://www.avanderlee.com/swift/creating-swift-package-manager-framework/#bundling-resources-with-a-swift-package) by SwiftLee. In short, I created a new package, initialized the Package.swift file, and it was done!
+
+Since I already had OTPKit and OTPKitTests, I simply moved all the files to Sources/OTPKit and Tests/OTPKitTests. The end result looked like the image below:
+
+<div className="border-lg flex w-full items-center justify-center flex-col !space-y-1">
+  <img src="/static/images/making-otpkit-package/2.png" className="rounded-lg" alt="old-new-package" />
+</div>
+There was an important detail here. The default Package.swift doesn't specify any platforms, so I had to specify it according to my framework. In this case, I set iOS 17 as the minimum platform.
+
+After ensuring that OTPKit and OTPKitTests were moved as expected, I made them accessible for users to try out through OTPKitDemo. OTPKitDemo should consist of OTPKit as an external package imported locally. The end result was like this:
+
+<div className="border-lg flex w-full items-center justify-center flex-col !space-y-1">
+  <img src="/static/images/making-otpkit-package/3.png" className="rounded-lg" alt="old-new-package" />
+</div>
+As you can see, OTPKit is now available as a local package dependency! I was able to maintain the same functionality as the original OTPKitDemo project.
+
+The next issue was adjusting the CI script. Using the old CI script caused errors. Here's the old CI script in GitHub Actions:
+
+<div className="border-lg flex w-full items-center justify-center flex-col !space-y-1">
+  <img src="/static/images/making-otpkit-package/4.png" className="rounded-lg" alt="" />
+</div>
+I wanted to focus on generating the Xcode project, building OTPKitDemo, and running OTPKit unit tests. Let's break it down:
+
+1. The old project used xcodegen, a library to generate the Xcode project. The reason was to avoid keeping the Xcode project in the repo, which could cause conflicts and make it hard to trace changes in permissions, etc. This was expected before I moved OTPKit's functionality to its own package. Now that Swift Package Manager handles things differently, I can skip the xcodegen step.
+2. Building OTPKitDemo was no longer necessary because the demo is just a small, simple code to demonstrate OTPKit usage. I decided to focus on testing OTPKit itself.
+3. Similarly, OTPKitTests still had a dependency on OTPKit.xcodeproj and the OTPKitDemo scheme. Now I should just run the tests separately. Note that Swift Package Manager doesn't have any build configuration, so I utilized test builds.
+
+With those considerations, the CI script was changed to the following:
+
+<div className="border-lg flex w-full items-center justify-center flex-col !space-y-1">
+  <img src="/static/images/making-otpkit-package/5.png" className="rounded-lg" alt="" />
+</div>
+No more Xcode project generation, no more OTPKitDemo building, and no more OTPKit tests dependent on OTPKitDemo!
+
+When I tried to run the test script locally, unfortunately, the script failed to build:
+
+<div className="border-lg flex w-full items-center justify-center flex-col !space-y-1">
+  <img src="/static/images/making-otpkit-package/6.png" className="rounded-lg" alt="" />
+</div>
+<div className="border-lg flex w-full items-center justify-center flex-col !space-y-1">
+  <img src="/static/images/making-otpkit-package/7.png" className="rounded-lg" alt="" />
+</div>
+After tracing the error, I found that the unit tests were failing to locate the `plan_basic_case.json` file from the test. It was strange because the folder structure was essentially the same.
+
+After searching online for a while, I found this [Stack Overflow post](https://stackoverflow.com/questions/47177036/use-resources-in-unit-tests-with-swift-package-manager) stating that Swift Package Manager treats files differently. We should create a standalone Resources folder to include the file target. I decided to add a process parameter to the resources file and change the folder directory. Note that if we want to use a bundle, we should use Bundle.module to ensure the bundle is working properly as mentioned in the [documentation](https://developer.apple.com/documentation/xcode/bundling-resources-with-a-swift-package).
+
+Finally, I adjusted the folder structure to the following so that the resource file could be accessed and the test would work:
+
+<div className="border-lg flex w-full items-center justify-center flex-col !space-y-1">
+  <img src="/static/images/making-otpkit-package/8.png" className="rounded-lg" alt="" />
+</div>
+
+This whole process is resulting in [this PR](https://github.com/OneBusAway/otpkit/pull/55) for OTPKit. Furthermore, if you're interested in OTPKit, you can contribute to the codebase! It's available for public! 😁
