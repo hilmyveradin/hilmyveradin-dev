@@ -7,13 +7,19 @@ interface Project {
 
 const projectsData: Project[] = [
   {
+    title: 'Kata',
+    description:
+      'Kata is an all-in-one iOS language learning platform for Indonesians to learn 10 different languages. Kata also supports keyboard extension.',
+    href: 'https://devpost.com/software/kata-indonesian-all-in-one-learning-language-platform',
+  },
+  {
     title: 'Share Tweet',
     description: `Share Tweet is an tweet image capturer. The purpose of this project is to create 16:9 tweet images that users can share`,
     href: 'https://share-tweet.com',
   },
   {
     title: 'BagiBuku.id',
-    description: `Submission for Garuda Hacks Hackathon. A Garuda Hacks 2023 submission. My team and I created this site with the idea of enhancing Indonesian literacy by providing a platform to share and receive books.`,
+    description: `Submission for Garuda Hacks Hackathon 4.0. My team and I created this site with the idea of enhancing Indonesian literacy by providing a platform to share and receive books.`,
     href: 'https://youtu.be/v0XUdI0nCUE',
   },
   {
