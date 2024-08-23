@@ -1,0 +1,117 @@
+---
+title: Error Handling in Swift
+summary: How to make error handling decision in Swift
+date: '2024-08-23'
+tags: ['Swift', 'CS Fundamentals']
+---
+
+# Introduction 
+While exploring networking code in the OTPKit Repo, I found an interesting thing: The network call is using the throw keyword instead of returning it as a [Result type](https://developer.apple.com/documentation/swift/result):
+
+```swift:RestAPI.swift {24} showLineNumbers
+    /// Fetches a trip plan from the API
+    ///
+    /// - Parameters:
+    ///   - fromPlace: The starting location of the trip
+    ///   - toPlace: The destination of the trip
+    ///   - time: The time of the trip
+    ///   - date: The date of the trip
+    ///   - mode: The transportation mode(s) for the trip
+    ///   - arriveBy: Whether the trip should arrive by the specified time
+    ///   - maxWalkDistance: The maximum walking distance in meters
+    ///   - wheelchair: Whether the trip should be wheelchair accessible
+    ///
+    /// - Returns: An OTPResponse object containing the trip plan
+    /// - Throws: An error if the network request fails or the response is invalid
+    public func fetchPlan(
+        fromPlace: String,
+        toPlace: String,
+        time: String,
+        date: String,
+        mode: String,
+        arriveBy: Bool,
+        maxWalkDistance: Int,
+        wheelchair: Bool
+    ) async throws -> OTPResponse {
+        var components = URLComponents(url: buildURL(endpoint: "plan"), resolvingAgainstBaseURL: false)!
+
+        components.queryItems = [
+            URLQueryItem(name: "fromPlace", value: fromPlace),
+            URLQueryItem(name: "toPlace", value: toPlace),
+            URLQueryItem(name: "time", value: time),
+            URLQueryItem(name: "date", value: date),
+            URLQueryItem(name: "mode", value: mode),
+            URLQueryItem(name: "arriveBy", value: arriveBy ? "true" : "false"),
+            URLQueryItem(name: "maxWalkDistance", value: String(maxWalkDistance)),
+            URLQueryItem(name: "wheelchair", value: wheelchair ? "true" : "false")
+        ]
+```
+
+Then I got curious: Why on earth is it using the throw statement? How does it work? What are the differences and benefits of using this statement instead of other approaches such as optional return, etc.?
+In this blog, I will try to cover some of the essential aspects of error handling in Swift!
+
+# Throw statement
+The throw statement is not a new concept unique to the Swift language; in fact, even C++ implements throw statements.
+
+From what I've learned, basically what throw does is this: it ensures that if anything unexpected happens in Swift functions, it can provide more clarity through a model that conforms to the Error type.
+
+Let's take a look at what the Swift documentation says about handling errors, especially with throw functions:
+
+<div className="border-lg flex w-full items-center justify-center flex-col !space-y-1">
+  <img src="/static/images/error-handling-in-swift/1.png" className="rounded-lg" alt="" />
+</div>
+
+> Throwing an error lets you indicate that something unexpected happened and the normal flow of execution can’t continue. 
+
+With this throw function, we can safely say that, "if this function is not working as expected, we can throw something so that we can process it later."
+
+# Error model
+
+Looking back at the documentation, it states that "In Swift, errors are represented by values of types that conform to the Error protocol. This empty protocol indicates that a type can be used for error handling."
+
+I got curious about why Swift (this specific language) decided to use an empty protocol, which is Error, to be conformed to by the Error Model. After doing some research, I found out the main reason for this is to help compilers and developers detect the error model early. With that in mind, there will be less error-prone code in the codebase. It gives us a single responsibility for the model to work on a specific use case.
+
+# How to use throw statement
+
+From the documentation, it states that there are four ways to specify error functions, in this case, the throw statement:
+
+1. Propagate the error from a function to the code that calls that function, 
+2. Handle the error using a do-catch statement, 
+3. Handle the error as an optional value, or 
+4. Assert that the error will not occur.
+
+You can check the full implementations of each possibility [here](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/errorhandling/#Propagating-Errors-Using-Throwing-Functions) but to make it short, from what I conclude, is that each step depends on `do-catch` and `try` statements. Here are the rules of thumb:
+
+1. Every throw function should either be implemented in other throw functions, called using a do-catch statement, or use a try statement
+2. There are three ways of using try statements: plain try statement `try`, force try `try!`, and optional try `try?`
+3. Make the Error model an enum so that it can give more clarity to the code
+
+Use `do-catch with try` for your basic needs. Use `try?` if there are optional possibilities from the function, and `try!` if you're confident that the function won't throw any errors.
+
+# When to use Result, throws, and return optional in our codebase?
+
+Now this is where the real problem begins. There are so many use cases of throw statements. What I conclude from my research is this:
+
+### Use throwing functions when:
+
+1. The operation can fail in multiple ways that need to be handled differently.
+2. You want to force error handling at the call site.
+3. The error is exceptional and not an expected part of normal operation.
+4. You need to propagate errors up the call stack.
+
+### Use Result types when:
+
+1. You want to provide both success and failure cases.
+2. In specific use cases of async operations with callback-API based, this will be a better choice.
+
+### Use optional return values (nil) when:
+
+1. The absence of a value is a normal, expected outcome.
+2. There's only one way the operation can fail.
+3. You don't need detailed error information.
+
+# Which one is better for fetchApi functions in OTPKit: escaping closure with Result type or throwing functions?
+
+Regarding the first question about fetchApi functions, I think either approach is fine. It's largely a matter of preference.
+
+Using Result-based closures will provide more clarity if the fetchApi is called directly. However, because these functions are abstracted with another function, I think using throw statements makes much more sense.
