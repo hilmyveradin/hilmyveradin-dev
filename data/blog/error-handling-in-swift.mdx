@@ -2,11 +2,11 @@
 title: Error Handling in Swift
 summary: How to make error handling decision in Swift
 date: '2024-08-23'
-tags: ['Swift', 'CS Fundamentals']
+tags: ['Swift', 'CS Fundamentals', 'OTPKit', 'GSOC']
 ---
 
 # Introduction 
-While exploring networking code in the OTPKit Repo, I found an interesting thing: The network call is using the throw keyword instead of returning it as a [Result type](https://developer.apple.com/documentation/swift/result):
+While exploring networking code in the [OTPKit Repo](https://github.com/OneBusAway/otpkit), I found an interesting thing: The network call is using the throw keyword instead of returning it as a [Result type](https://developer.apple.com/documentation/swift/result):
 
 ```swift:RestAPI.swift {24} showLineNumbers
     /// Fetches a trip plan from the API
